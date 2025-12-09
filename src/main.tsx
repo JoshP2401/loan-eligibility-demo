@@ -7,7 +7,9 @@ import App from "./App.tsx";
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <BrowserRouter>
-            <ChakraProvider value={defaultSystem} children={<App />} />
+            <ChakraProvider value={defaultSystem}>
+                <App />
+            </ChakraProvider>
         </BrowserRouter>
     </StrictMode>
 );
