@@ -6,10 +6,11 @@ import LoanTerm from "../steps/LoanTerm";
 import Review from "../steps/Review";
 import DashboardHeader from "./DashboardHeader";
 import FormWizard from "./LoanWizard";
+import { checkLoanEligibility, type LoanEligibilityRequest } from "../api/loanApi";
 
 const DashboardOverview = () => {
     const initialValues = {
-        loanProduct: "PERSONAL",
+        loanProduct: "personal_loan",
         loanPurpose: "",
         monthlyIncome: "",
         monthlyExpenses: "",
@@ -19,8 +20,43 @@ const DashboardOverview = () => {
         creditScore: "",
     };
 
-    const handleSubmit = (values: Record<string, unknown>) => {
-        console.log("Loan Application Submitted:", values);
+    const handleSubmit = async (values: FormikValues) => {
+        const monthlyIncome = Number(values.monthlyIncome ?? 0);
+        const monthlyExpenses = Number(values.monthlyExpenses ?? 0);
+        const existingDebt = Number(values.existingDebt ?? 0);
+        const creditScore = values.creditScore ? Number(values.creditScore) : 650;
+
+        const requestedAmount = Number(values.loanAmount ?? 0);
+        const loanTerm = Number(values.loanTerm ?? 0);
+        const loanPurpose = (values.loanPurpose as string) || "other";
+
+        const payload: LoanEligibilityRequest = {
+            personalInfo: {
+                age: 35,
+                employmentStatus: "employed",
+                employmentDuration: 24,
+            },
+            financialInfo: {
+                monthlyIncome,
+                monthlyExpenses,
+                existingDebt,
+                creditScore,
+            },
+            loanDetails: {
+                requestedAmount,
+                loanTerm,
+                loanPurpose,
+            },
+        };
+
+        const eligibilityResponse = await checkLoanEligibility(payload);
+
+        // For now, log the full flow; this can later drive the Review UI.
+        console.log("Loan Application Submitted:", {
+            formValues: values,
+            eligibilityPayload: payload,
+            eligibilityResponse,
+        });
     };
 
     const steps = [

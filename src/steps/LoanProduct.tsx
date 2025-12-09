@@ -1,5 +1,8 @@
 import { Badge, Flex, HStack, Text, VStack } from "@chakra-ui/react";
 import { type FormikValues } from "formik";
+import { useEffect, useState } from "react";
+import { getLoanProducts } from "../api/loanApi";
+import type { LoanProduct as LoanProductType } from "../types/LoanProduct";
 import FormikSelect from "../formik/FormikSelect";
 import Title from "../components/Title";
 
@@ -22,6 +25,12 @@ const CardData = (props: CardDataProps) => {
         </VStack>
     );
 };
+
+const formatPurposeLabel = (purpose: string) =>
+    purpose
+        .split("_")
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
 
 type LoanProductCardProps = {
     title: string;
@@ -89,7 +98,7 @@ const LoanProductCard = (props: LoanProductCardProps) => {
                             fontSize="sm"
                             fontWeight="bold"
                         >
-                            {purpose}
+                            {formatPurposeLabel(purpose)}
                         </Text>
                     ))}
                 </HStack>
@@ -99,49 +108,97 @@ const LoanProductCard = (props: LoanProductCardProps) => {
 };
 
 const LoanProduct = ({ formik }: { formik: FormikValues }) => {
-    const products = [
-        {
-            id: "PERSONAL",
-            title: "Personal Loan",
-            subtitle: "Flexible personal financing for various needs.",
-            loanAmount: "R5,000 - R300,000",
-            loanTerm: "6 - 60 months",
-            interestRate: "10.5% - 18.5%",
-            purposes: ["Personal", "Home Improvement", "Debt Consolidation"],
-        },
-        {
-            id: "VEHICLE",
-            title: "Vehicle Finance",
-            subtitle: "Financing for new and used vehicles.",
-            loanAmount: "R50,000 - R1,500,000",
-            loanTerm: "12 - 72 months",
-            interestRate: "8.5% - 15.0%",
-            purposes: ["New Vehicle", "Used Vehicle"],
-        },
-    ];
+    const [products, setProducts] = useState<LoanProductType[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const loadProducts = async () => {
+            setIsLoading(true);
+            try {
+                const response = await getLoanProducts();
+                if (isMounted) {
+                    setProducts(response.products);
+                }
+            } catch {
+                if (isMounted) {
+                    setError("Failed to load loan products");
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        loadProducts();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    if (isLoading && products.length === 0) {
+        return <Text color="gray.500">Loading loan products...</Text>;
+    }
+
+    if (error && products.length === 0) {
+        return (
+            <VStack alignItems="flex-start" width="100%">
+                <Text color="red.500" fontSize="sm">
+                    {error}
+                </Text>
+                <Text color="gray.500" fontSize="sm">
+                    Please try again later.
+                </Text>
+            </VStack>
+        );
+    }
+
+    if (products.length === 0) {
+        return (
+            <Text color="gray.500">
+                No loan products are available at the moment.
+            </Text>
+        );
+    }
 
     const selectedProductId = (formik.values.loanProduct as string) || products[0]?.id;
-    const selectedProduct = products.find((product) => product.id === selectedProductId) ?? products[0];
+    const selectedProduct =
+        products.find((product) => product.id === selectedProductId) ?? products[0];
 
     const purposeOptions =
         selectedProduct?.purposes.map((purpose) => ({
-            label: purpose,
+            label: formatPurposeLabel(purpose),
             value: purpose,
         })) ?? [];
 
+    const formatAmountRange = (product: LoanProductType) =>
+        `R${product.minAmount.toLocaleString()} - R${product.maxAmount.toLocaleString()}`;
+
+    const formatTermRange = (product: LoanProductType) =>
+        `${product.minTerm} - ${product.maxTerm} months`;
+
+    const formatInterestRange = (product: LoanProductType) =>
+        `${product.interestRateRange.min}% - ${product.interestRateRange.max}%`;
+
     return (
         <>
-            <Text color="gray.500">Select the product and purpose that best matches your need</Text>
+            <Text color="gray.500">
+                Select the product and purpose that best matches your need
+            </Text>
 
             <HStack width="100%" height="100%">
                 {products.map((product) => (
                     <LoanProductCard
                         key={product.id}
-                        title={product.title}
-                        subtitle={product.subtitle}
-                        loanAmount={product.loanAmount}
-                        loanTerm={product.loanTerm}
-                        interestRate={product.interestRate}
+                        title={product.name}
+                        subtitle={product.description}
+                        loanAmount={formatAmountRange(product)}
+                        loanTerm={formatTermRange(product)}
+                        interestRate={formatInterestRange(product)}
                         purposes={product.purposes}
                         isSelected={product.id === selectedProductId}
                         onSelect={() => {
