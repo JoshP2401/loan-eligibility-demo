@@ -1,32 +1,28 @@
-import { HStack, Input, Text, VStack } from "@chakra-ui/react";
-import Title from "../components/Title";
+import { HStack, Text } from "@chakra-ui/react";
+import FormikInput from "../formik/FormikInput";
 
 const IncomeExpenses = () => {
     return (
-        <VStack
-            border="1px solid"
-            borderColor="gray.200"
-            borderRadius="md"
-            boxShadow="sm"
-            padding="1rem"
-            width="100%"
-            alignItems="flex-start"
-            gap="0.5rem"
-            marginTop="2rem"
-            marginBottom="2rem"
-        >
-            <Text fontSize="sm" color="gray.500">
-                STEP 2 OF 4
-            </Text>
-
-            <Title title="Tell us about your Income and Expenses" />
-            <Text color="gray.500">This is used to estimate affordability and eligibility.</Text>
+        <>
+            <Text color="gray.500">We use this to estimate affordability.</Text>
 
             <HStack width="100%" gap="1rem" marginTop="1rem">
-                <Input placeholder="Monthly Income" type="number" />
-                <Input placeholder="Monthly Expenses" type="number" />
+                <FormikInput
+                    name="monthlyIncome"
+                    placeholder="Monthly Income"
+                    label="Monthly Income (After Tax)"
+                    subtitle="Your regular take-home pay per month (minimum R5,000)."
+                    type="number"
+                />
+                <FormikInput
+                    name="monthlyExpenses"
+                    placeholder="Monthly Expenses"
+                    label="Monthly Expenses"
+                    subtitle="Include rent, transport, food and other fixed commitments."
+                    type="number"
+                />
             </HStack>
-        </VStack>
+        </>
     );
 };
 
