@@ -42,6 +42,94 @@ const EligibilityWidget = (props: EligibilityWidgetProps) => {
     );
 };
 
+const LoanPreview = () => {
+    return (
+        <VStack
+            w="100%"
+            height="100%"
+            marginTop="1rem"
+            marginBottom="1rem"
+            gap="1rem"
+            justify="left"
+            alignItems="flex-start"
+        >
+            <Title size="xl" title="Selected Product & Rate Preview" />
+            <Text color="gray.500">
+                Based on the loan product you chose and the information entered above, this calculates a mocked rate and
+                early repayment view.
+            </Text>
+
+            <Text fontSize="sm" color="gray.800" marginTop="0.5rem">
+                Based on your income, expenses and requested amount, this loan looks affordable.
+            </Text>
+
+            <HStack width="100%">
+                <EligibilityWidget
+                    title="Product"
+                    data="Personal Loan"
+                    subtitle="Flexible personal financing for various needs."
+                />
+                <EligibilityWidget title="Estimated Rate" data="14.50%" subtitle="Within 10.5% band." />
+                <EligibilityWidget title="Est. Monthly Payment" data="R7,237" subtitle="Over apx. 24 months." />
+            </HStack>
+        </VStack>
+    );
+};
+
+type PaymentScheduleEntryProps = {
+    month: number;
+    payment: number;
+    principal: number;
+    interest: number;
+    balance: number;
+};
+
+type EntryPairingProps = {
+    title: string;
+    value: string;
+};
+
+const EntryPairing = ({ title, value }: EntryPairingProps) => (
+    <VStack justify="flex-start" width="100%" alignItems="flex-start">
+        <Text color="gray.500">{title}</Text>
+        <Text>{value}</Text>
+    </VStack>
+);
+
+const PaymentScheduleEntry = (props: PaymentScheduleEntryProps) => {
+    const { month, payment, principal, interest, balance } = props;
+
+    return (
+        <HStack width="100%" justifyContent="space-between" marginTop="1rem" marginBottom="1rem">
+            <EntryPairing title="Month" value={month.toString()} />
+            <EntryPairing title="Payment" value={`R${payment.toFixed(2)}`} />
+            <EntryPairing title="Principal" value={`R${principal.toFixed(2)}`} />
+            <EntryPairing title="Interest" value={`R${interest.toFixed(2)}`} />
+            <EntryPairing title="Balance" value={`R${balance.toFixed(2)}`} />
+        </HStack>
+    );
+};
+
+const PaymentSchedule = () => {
+    return (
+        <VStack
+            w="100%"
+            height="100%"
+            marginTop="1rem"
+            marginBottom="1rem"
+            gap="1rem"
+            justify="left"
+            alignItems="flex-start"
+        >
+            <Title size="xl" title="Payment Schedule preview" />
+            <Text color="gray.500">This is an example of how your monthly payments will be structured.</Text>
+
+            <PaymentScheduleEntry month={1} payment={7237} principal={5425} interest={1813} balance={144575} />
+            <PaymentScheduleEntry month={2} payment={7237} principal={5425} interest={1747} balance={139085} />
+        </VStack>
+    );
+};
+
 const Review = () => {
     return (
         <VStack
@@ -89,6 +177,10 @@ const Review = () => {
             </HStack>
 
             <BudgetStretchBar />
+
+            <LoanPreview />
+
+            <PaymentSchedule />
         </VStack>
     );
 };
