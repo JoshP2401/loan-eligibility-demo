@@ -7,6 +7,12 @@ import Review from "../steps/Review";
 import DashboardHeader from "./DashboardHeader";
 import FormWizard from "./LoanWizard";
 import { checkLoanEligibility, type LoanEligibilityRequest } from "../api/loanApi";
+import {
+    loanProductStepSchema,
+    incomeExpensesStepSchema,
+    loanDetailsStepSchema,
+    fullLoanApplicationSchema,
+} from "../validation/loanValidation";
 
 const DashboardOverview = () => {
     const initialValues = {
@@ -67,22 +73,22 @@ const DashboardOverview = () => {
     const steps = [
         {
             component: (formik: FormikValues) => <LoanProduct formik={formik} />,
-            validationSchema: "",
+            validationSchema: loanProductStepSchema,
             title: "Choose Loan Product",
         },
         {
             component: () => <IncomeExpenses />,
-            validationSchema: "",
+            validationSchema: incomeExpensesStepSchema,
             title: "Income & Expenses",
         },
         {
             component: () => <LoanTerm />,
-            validationSchema: "",
+            validationSchema: loanDetailsStepSchema,
             title: "Loan Details",
         },
         {
             component: (formik: FormikValues) => <Review formik={formik} />,
-            validationSchema: "",
+            validationSchema: fullLoanApplicationSchema,
             title: "Review",
         },
     ];

@@ -38,7 +38,7 @@ const IncomeExpenses = () => {
                 <FormikInput
                     name="creditScore"
                     label="Credit Score (Optional)"
-                    subtitle="Used only to adjust the mocked interest rate (300-85 typical range)."
+                    subtitle="Used only to adjust the mocked interest rate (300-850 typical range)."
                     placeholder="Enter score"
                     type="number"
                 />

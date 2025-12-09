@@ -1,13 +1,14 @@
 import { Button, Flex, VStack, Text } from "@chakra-ui/react";
 import { Form, Formik, type FormikValues } from "formik";
 import { useState } from "react";
+import type { AnySchema } from "yup";
 import ProgressStepper from "./ProgressStepper";
 import StepContainer from "./StepContainer";
 import Title from "./Title";
 
 type WizardStep = {
     component: (formik: FormikValues) => React.ReactNode;
-    validationSchema: string;
+    validationSchema?: AnySchema;
     title: string;
 };
 
