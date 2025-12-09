@@ -1,6 +1,5 @@
 import { Badge, Box, HStack, Progress, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import type { FormikValues } from "formik";
 import Title from "../components/Title";
 import {
     checkLoanEligibility,
@@ -10,10 +9,6 @@ import {
 } from "../api/loanApi";
 import type { LoanEligibilityResponse } from "../types/LoanEligibility";
 import type { InterestRateCalculatorResponse } from "../types/InterestRateCalculator";
-
-type ReviewProps = {
-    formik: FormikValues;
-};
 
 type EntryPairingProps = {
     title: string;
@@ -61,10 +56,7 @@ const PaymentScheduleEntry = (props: PaymentScheduleEntryProps) => {
 
     return (
         <Box width="100%" marginTop="1rem" marginBottom="1rem">
-            <SimpleGrid
-                columns={{ base: 1, sm: 2, md: 5 }}
-                gap="0.75rem"
-            >
+            <SimpleGrid columns={{ base: 1, sm: 2, md: 5 }} gap="0.75rem">
                 <EntryPairing title="Month" value={month.toString()} />
                 <EntryPairing title="Payment" value={formatCurrencyInline(payment)} />
                 <EntryPairing title="Principal" value={formatCurrencyInline(principal)} />
@@ -75,12 +67,18 @@ const PaymentScheduleEntry = (props: PaymentScheduleEntryProps) => {
     );
 };
 
-const BudgetStretchBar = () => {
+type BudgetStretchBarProps = {
+    debtToIncomeRatio: number | null;
+};
+
+const BudgetStretchBar = ({ debtToIncomeRatio }: BudgetStretchBarProps) => {
+    const value = debtToIncomeRatio ?? 0;
+
     return (
         <Box w="100%" height="100%" marginTop="1rem" marginBottom="1rem">
             <Title size="xl" title="How stretched is your budget?" />
 
-            <Progress.Root value={25} size="sm">
+            <Progress.Root value={value} size="sm">
                 <Progress.Track bg="#eee" borderRadius="full">
                     <Progress.Range bg="green.500" borderRadius="full" />
                 </Progress.Track>
@@ -116,10 +114,41 @@ const EligibilityWidget = (props: EligibilityWidgetProps) => {
     );
 };
 
-const Review = ({ formik }: ReviewProps) => {
-    const { values } = formik;
+const formatCurrency = (amount: number) =>
+    `R${amount.toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-    const [eligibility, setEligibility] = useState<LoanEligibilityResponse | null>(null);
+const safeCurrency = (amount: number | null | undefined) =>
+    amount != null ? formatCurrency(amount) : "-";
+
+// Static request bodies that match LoanEligibilitySimulatorEndpoints.md
+const STATIC_ELIGIBILITY_REQUEST: LoanEligibilityRequest = {
+    personalInfo: {
+        age: 35,
+        employmentStatus: "employed",
+        employmentDuration: 24,
+    },
+    financialInfo: {
+        monthlyIncome: 25000.0,
+        monthlyExpenses: 15000.0,
+        existingDebt: 5000.0,
+        creditScore: 650,
+    },
+    loanDetails: {
+        requestedAmount: 150000.0,
+        loanTerm: 24,
+        loanPurpose: "home_improvement",
+    },
+};
+
+const STATIC_RATE_REQUEST: InterestRateCalculatorRequest = {
+    loanAmount: 150000.0,
+    loanTerm: 24,
+    creditScore: 650,
+    loanType: "personal_loan",
+};
+
+const Review = () => {
+    const [eligibilityResult, setEligibilityResult] = useState<LoanEligibilityResponse | null>(null);
     const [eligibilityLoading, setEligibilityLoading] = useState(false);
     const [eligibilityError, setEligibilityError] = useState<string | null>(null);
 
@@ -127,49 +156,16 @@ const Review = ({ formik }: ReviewProps) => {
     const [rateLoading, setRateLoading] = useState(false);
     const [rateError, setRateError] = useState<string | null>(null);
 
-    const age = values.age ? Number(values.age) : 35;
-    const employmentStatus = (values.employmentStatus as string) || "Employed";
-
-    const monthlyIncome = Number(values.monthlyIncome ?? 0);
-    const monthlyExpenses = Number(values.monthlyExpenses ?? 0);
-    const existingDebt = Number(values.existingDebt ?? 0);
-    const creditScore = values.creditScore ? Number(values.creditScore) : 650;
-
-    const requestedAmount = Number(values.loanAmount ?? 0) || 150000;
-    const loanTerm = Number(values.loanTerm ?? 0) || 24;
-    const loanPurpose = (values.loanPurpose as string) || "home_improvement";
-    const loanProduct = (values.loanProduct as string) || "personal_loan";
-
     useEffect(() => {
-        const payload: LoanEligibilityRequest = {
-            personalInfo: {
-                age,
-                employmentStatus,
-                employmentDuration: 24,
-            },
-            financialInfo: {
-                monthlyIncome,
-                monthlyExpenses,
-                existingDebt,
-                creditScore,
-            },
-            loanDetails: {
-                requestedAmount,
-                loanTerm,
-                loanPurpose,
-            },
-        };
-
         let isMounted = true;
 
         const loadEligibility = async () => {
             setEligibilityLoading(true);
             setEligibilityError(null);
-
             try {
-                const response = await checkLoanEligibility(payload);
+                const response = await checkLoanEligibility(STATIC_ELIGIBILITY_REQUEST);
                 if (isMounted) {
-                    setEligibility(response);
+                    setEligibilityResult(response);
                 }
             } catch {
                 if (isMounted) {
@@ -182,39 +178,11 @@ const Review = ({ formik }: ReviewProps) => {
             }
         };
 
-        void loadEligibility();
-
-        return () => {
-            isMounted = false;
-        };
-    }, [
-        age,
-        employmentStatus,
-        monthlyIncome,
-        monthlyExpenses,
-        existingDebt,
-        creditScore,
-        requestedAmount,
-        loanTerm,
-        loanPurpose,
-    ]);
-
-    useEffect(() => {
-        const ratePayload: InterestRateCalculatorRequest = {
-            loanAmount: requestedAmount,
-            loanTerm,
-            creditScore,
-            loanType: loanProduct,
-        };
-
-        let isMounted = true;
-
         const loadRate = async () => {
             setRateLoading(true);
             setRateError(null);
-
             try {
-                const response = await calculateInterestRate(ratePayload);
+                const response = await calculateInterestRate(STATIC_RATE_REQUEST);
                 if (isMounted) {
                     setRateResult(response);
                 }
@@ -229,15 +197,27 @@ const Review = ({ formik }: ReviewProps) => {
             }
         };
 
+        void loadEligibility();
         void loadRate();
 
         return () => {
             isMounted = false;
         };
-    }, [requestedAmount, loanTerm, creditScore, loanProduct]);
+    }, []);
 
-    const formatCurrency = (amount: number) =>
-        `R${amount.toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const personalInfo = STATIC_ELIGIBILITY_REQUEST.personalInfo;
+    const financialInfo = STATIC_ELIGIBILITY_REQUEST.financialInfo;
+    const loanDetails = STATIC_ELIGIBILITY_REQUEST.loanDetails;
+
+    const loanType = STATIC_RATE_REQUEST.loanType;
+    const employmentStatusLabel = toTitleCase(personalInfo.employmentStatus);
+
+    const productLabel =
+        loanType === "vehicle_loan"
+            ? "Vehicle Finance"
+            : loanType === "personal_loan" || !loanType
+            ? "Personal Loan"
+            : toTitleCase(loanType);
 
     return (
         <VStack
@@ -259,8 +239,8 @@ const Review = ({ formik }: ReviewProps) => {
 
             <Title title="Review Your Results" />
             <Text color="gray.500">
-                Review your personal and financial details, loan request, and a mocked eligibility and rate outcome based on the demo
-                API.
+                Review your personal and financial details, loan request, and a mocked eligibility and rate outcome
+                based entirely on the demo API specification.
             </Text>
 
             <Box
@@ -273,23 +253,27 @@ const Review = ({ formik }: ReviewProps) => {
                 bg="gray.50"
             >
                 <Title size="xl" title="Personal & Financial Details" />
-                <SimpleGrid
-                    columns={{ base: 1, sm: 2, lg: 4 }}
-                    gap="1rem"
-                    marginTop="0.75rem"
-                >
-                    <EntryPairing title="Age" value={values.age ? String(values.age) : "35"} />
-                    <EntryPairing title="Employment Status" value={toTitleCase(employmentStatus)} />
-                    <EntryPairing title="Monthly Income" value={formatCurrency(monthlyIncome || 25000)} />
-                    <EntryPairing title="Monthly Expenses" value={formatCurrency(monthlyExpenses || 15000)} />
+                <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="1rem" marginTop="0.75rem">
+                    <EntryPairing title="Age" value={String(personalInfo.age)} />
+                    <EntryPairing title="Employment Status" value={employmentStatusLabel} />
+                    <EntryPairing
+                        title="Monthly Income"
+                        value={safeCurrency(financialInfo.monthlyIncome)}
+                    />
+                    <EntryPairing
+                        title="Monthly Expenses"
+                        value={safeCurrency(financialInfo.monthlyExpenses)}
+                    />
                 </SimpleGrid>
-                <SimpleGrid
-                    columns={{ base: 1, sm: 2, lg: 4 }}
-                    gap="1rem"
-                    marginTop="0.75rem"
-                >
-                    <EntryPairing title="Existing Debt" value={formatCurrency(existingDebt || 5000)} />
-                    <EntryPairing title="Credit Score" value={String(creditScore || 650)} />
+                <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="1rem" marginTop="0.75rem">
+                    <EntryPairing
+                        title="Existing Debt"
+                        value={safeCurrency(financialInfo.existingDebt)}
+                    />
+                    <EntryPairing
+                        title="Credit Score"
+                        value={String(financialInfo.creditScore)}
+                    />
                 </SimpleGrid>
             </Box>
 
@@ -303,28 +287,32 @@ const Review = ({ formik }: ReviewProps) => {
                 bg="gray.50"
             >
                 <Title size="xl" title="Loan Details" />
-                <SimpleGrid
-                    columns={{ base: 1, sm: 2, lg: 4 }}
-                    gap="1rem"
-                    marginTop="0.75rem"
-                >
+                <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="1rem" marginTop="0.75rem">
+                    <EntryPairing title="Product" value={productLabel} />
                     <EntryPairing
-                        title="Product"
-                        value={loanProduct === "vehicle_loan" ? "Vehicle Finance" : "Personal Loan"}
+                        title="Purpose"
+                        value={toTitleCase(loanDetails.loanPurpose)}
                     />
-                    <EntryPairing title="Purpose" value={toTitleCase(loanPurpose)} />
-                    <EntryPairing title="Requested Amount" value={formatCurrency(requestedAmount)} />
-                    <EntryPairing title="Loan Term (months)" value={String(loanTerm)} />
+                    <EntryPairing
+                        title="Requested Amount"
+                        value={safeCurrency(loanDetails.requestedAmount)}
+                    />
+                    <EntryPairing
+                        title="Loan Term (months)"
+                        value={String(loanDetails.loanTerm)}
+                    />
                 </SimpleGrid>
             </Box>
 
             <HStack width="100%" justifyContent="space-between" marginTop="1.5rem" marginBottom="0.5rem">
                 <Title size="xl" title="Eligibility Overview" />
                 <Badge bgColor={"green.500"} variant="subtle" color="white">
-                    {eligibility?.eligibilityResult.isEligible ? "Eligible" : "Not Eligible"}
+                    {eligibilityResult?.eligibilityResult.isEligible ? "Eligible" : "Not Eligible"}
                 </Badge>
             </HStack>
-            <Text color="gray.500">A mocked interpretation of your inputs, not a real credit decision.</Text>
+            <Text color="gray.500">
+                A mocked interpretation of your inputs, not a real credit decision.
+            </Text>
 
             {eligibilityLoading && (
                 <Text color="gray.500" fontSize="sm">
@@ -338,7 +326,7 @@ const Review = ({ formik }: ReviewProps) => {
                 </Text>
             )}
 
-            {eligibility && (
+            {eligibilityResult && (
                 <>
                     <Box
                         width="100%"
@@ -350,29 +338,34 @@ const Review = ({ formik }: ReviewProps) => {
                         borderColor="gray.200"
                         bg="gray.50"
                     >
-                        <SimpleGrid
-                            columns={{ base: 1, md: 3 }}
-                            gap="1rem"
-                        >
+                        <SimpleGrid columns={{ base: 1, md: 3 }} gap="1rem">
                             <EligibilityWidget
                                 title="Approval Likelihood"
-                                data={`${eligibility.eligibilityResult.approvalLikelihood}%`}
-                                subtitle={`Risk: ${toTitleCase(eligibility.eligibilityResult.riskCategory)}`}
+                                data={`${eligibilityResult.eligibilityResult.approvalLikelihood}%`}
+                                subtitle={`Risk: ${toTitleCase(
+                                    eligibilityResult.eligibilityResult.riskCategory,
+                                )}`}
                             />
                             <EligibilityWidget
                                 title="Recommended Amount"
-                                data={formatCurrency(eligibility.recommendedLoan.recommendedAmount)}
-                                subtitle={`Max Amount: ${formatCurrency(eligibility.recommendedLoan.maxAmount)}`}
+                                data={safeCurrency(eligibilityResult.recommendedLoan.recommendedAmount)}
+                                subtitle={`Max Amount: ${safeCurrency(
+                                    eligibilityResult.recommendedLoan.maxAmount,
+                                )}`}
                             />
                             <EligibilityWidget
                                 title="Debt-to-Income Ratio"
-                                data={`${eligibility.affordabilityAnalysis.debtToIncomeRatio.toFixed(1)}%`}
+                                data={`${eligibilityResult.affordabilityAnalysis.debtToIncomeRatio.toFixed(
+                                    1,
+                                )}%`}
                                 subtitle="Total debt as a share of your income"
                             />
                         </SimpleGrid>
                     </Box>
 
-                    <BudgetStretchBar />
+                    <BudgetStretchBar
+                        debtToIncomeRatio={eligibilityResult.affordabilityAnalysis.debtToIncomeRatio}
+                    />
                 </>
             )}
 
@@ -387,8 +380,8 @@ const Review = ({ formik }: ReviewProps) => {
             >
                 <Title size="xl" title="Selected Product & Rate Preview" />
                 <Text color="gray.500">
-                    Based on the loan product you chose and the information entered above, this calculates a mocked rate and early
-                    repayment view.
+                    Based on the loan product you chose and the information entered above, this
+                    calculates a mocked rate and early repayment view.
                 </Text>
 
                 {rateLoading && (
@@ -417,10 +410,7 @@ const Review = ({ formik }: ReviewProps) => {
                             borderColor="gray.200"
                             bg="gray.50"
                         >
-                            <SimpleGrid
-                                columns={{ base: 1, md: 3 }}
-                                gap="1rem"
-                            >
+                            <SimpleGrid columns={{ base: 1, md: 3 }} gap="1rem">
                                 <EligibilityWidget
                                     title="Estimated Rate"
                                     data={`${rateResult.interestRate.toFixed(2)}%`}
@@ -428,13 +418,15 @@ const Review = ({ formik }: ReviewProps) => {
                                 />
                                 <EligibilityWidget
                                     title="Est. Monthly Payment"
-                                    data={formatCurrency(rateResult.monthlyPayment)}
+                                    data={safeCurrency(rateResult.monthlyPayment)}
                                     subtitle="Based on your requested term"
                                 />
                                 <EligibilityWidget
                                     title="Total Repayment"
-                                    data={formatCurrency(rateResult.totalRepayment)}
-                                    subtitle={`Total Interest: ${formatCurrency(rateResult.totalInterest)}`}
+                                    data={safeCurrency(rateResult.totalRepayment)}
+                                    subtitle={`Total Interest: ${safeCurrency(
+                                        rateResult.totalInterest,
+                                    )}`}
                                 />
                             </SimpleGrid>
                         </Box>
