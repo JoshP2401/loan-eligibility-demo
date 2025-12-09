@@ -28,7 +28,12 @@ const FormWizard = (props: WizardProps) => {
     const stepNames = steps.map(s => s.title);
 
     return (
-        <VStack width="100%" height="100%" align="flex-start" gap="2">
+        <VStack
+            width="100%"
+            height="100%"
+            align={{ base: "stretch", md: "flex-start" }}
+            gap={4}
+        >
             <ProgressStepper currentStep={currentStepIndex} steps={stepNames} />
 
             <Formik
@@ -51,7 +56,7 @@ const FormWizard = (props: WizardProps) => {
                             flexDirection: "column",
                         }}
                     >
-                        <VStack flex="1" width="100%" alignItems="flex-start">
+                        <VStack flex="1" width="100%" alignItems={{ base: "stretch", md: "flex-start" }}>
                             <StepContainer>
                                 <Text color="gray.500">
                                     STEP {currentStepIndex + 1} OF {steps.length}
@@ -61,13 +66,32 @@ const FormWizard = (props: WizardProps) => {
                             </StepContainer>
                         </VStack>
 
-                        <Flex justify="space-between" marginTop="auto" paddingTop="2rem" marginBottom="2rem">
+                        <Flex
+                            justify={{ base: "center", md: "space-between" }}
+                            align="center"
+                            marginTop="auto"
+                            paddingTop={{ base: "1.5rem", md: "2rem" }}
+                            marginBottom={{ base: "1.5rem", md: "2rem" }}
+                            gap={{ base: "0.75rem", md: "1rem" }}
+                            direction={{ base: "column-reverse", md: "row" }}
+                            width="100%"
+                        >
                             {currentStepIndex > 0 && (
-                                <Button variant="outline" onClick={() => setCurrentStepIndex(i => i - 1)}>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setCurrentStepIndex(i => i - 1)}
+                                    width={{ base: "100%", md: "auto" }}
+                                >
                                     Back
                                 </Button>
                             )}
-                            <Button color="white" bgColor="orange.500" type="submit" marginLeft="auto">
+                            <Button
+                                color="white"
+                                bgColor="orange.500"
+                                type="submit"
+                                marginLeft={{ base: 0, md: "auto" }}
+                                width={{ base: "100%", md: "auto" }}
+                            >
                                 {isLastStep ? "Submit Application" : "Next"}
                             </Button>
                         </Flex>

@@ -1,4 +1,4 @@
-import { Badge, Flex, HStack, Text, VStack } from "@chakra-ui/react";
+import { Badge, Flex, HStack, Stack, Text, VStack } from "@chakra-ui/react";
 import { type FormikValues } from "formik";
 import { useEffect, useState } from "react";
 import { getLoanProducts } from "../api/loanApi";
@@ -47,7 +47,7 @@ const LoanProductCard = (props: LoanProductCardProps) => {
     const { isSelected = false, title, subtitle, loanAmount, loanTerm, interestRate, purposes, onSelect } = props;
     return (
         <VStack
-            width="100%"
+            width={{ base: "100%", md: "50%" }}
             height="100%"
             alignItems="flex-start"
             gap="0.5rem"
@@ -190,7 +190,12 @@ const LoanProduct = ({ formik }: { formik: FormikValues }) => {
                 Select the product and purpose that best matches your need
             </Text>
 
-            <HStack width="100%" height="100%">
+            {/* Stack cards vertically on mobile, side by side on larger screens */}
+            <Stack
+                width="100%"
+                gap="1rem"
+                direction={{ base: "column", md: "row" }}
+            >
                 {products.map((product) => (
                     <LoanProductCard
                         key={product.id}
@@ -209,7 +214,7 @@ const LoanProduct = ({ formik }: { formik: FormikValues }) => {
                         }}
                     />
                 ))}
-            </HStack>
+            </Stack>
 
             <FormikSelect
                 name="loanPurpose"

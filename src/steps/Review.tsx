@@ -60,13 +60,18 @@ const PaymentScheduleEntry = (props: PaymentScheduleEntryProps) => {
     const { month, payment, principal, interest, balance } = props;
 
     return (
-        <HStack width="100%" justifyContent="space-between" marginTop="1rem" marginBottom="1rem">
-            <EntryPairing title="Month" value={month.toString()} />
-            <EntryPairing title="Payment" value={formatCurrencyInline(payment)} />
-            <EntryPairing title="Principal" value={formatCurrencyInline(principal)} />
-            <EntryPairing title="Interest" value={formatCurrencyInline(interest)} />
-            <EntryPairing title="Balance" value={formatCurrencyInline(balance)} />
-        </HStack>
+        <Box width="100%" marginTop="1rem" marginBottom="1rem">
+            <SimpleGrid
+                columns={{ base: 1, sm: 2, md: 5 }}
+                gap="0.75rem"
+            >
+                <EntryPairing title="Month" value={month.toString()} />
+                <EntryPairing title="Payment" value={formatCurrencyInline(payment)} />
+                <EntryPairing title="Principal" value={formatCurrencyInline(principal)} />
+                <EntryPairing title="Interest" value={formatCurrencyInline(interest)} />
+                <EntryPairing title="Balance" value={formatCurrencyInline(balance)} />
+            </SimpleGrid>
+        </Box>
     );
 };
 
@@ -443,7 +448,7 @@ const Review = ({ formik }: ReviewProps) => {
                             justify="left"
                             alignItems="flex-start"
                         >
-                            <Title size="xl" title="Payment Schedule preview" />
+                            <Title size="xl" title="Payment Schedule Preview" />
                             <Text color="gray.500">
                                 This is an example of how your monthly payments will be structured.
                             </Text>

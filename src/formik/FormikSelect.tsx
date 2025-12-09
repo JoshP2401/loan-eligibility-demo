@@ -21,6 +21,8 @@ const FormikSelect = (props: FormikSelectProps) => {
     const { name, options, placeholder, disabled = false, label, subtitle } = props;
     const [field, meta, helpers] = useField(name);
 
+    const showError = meta.touched && !!meta.error;
+
     const items = options.map((option) => ({
         ...option,
         value: String(option.value),
@@ -65,11 +67,9 @@ const FormikSelect = (props: FormikSelectProps) => {
                 </Select.Positioner>
             </Select.Root>
 
-            {meta.touched && meta.error && (
-                <Text color="red.500" fontSize="sm">
-                    {meta.error}
-                </Text>
-            )}
+            <Text color="red.500" fontSize="sm" minH="1.25rem">
+                {showError ? meta.error : " "}
+            </Text>
 
             {subtitle && (
                 <Text fontSize="xs" fontWeight="medium" color="gray.500">

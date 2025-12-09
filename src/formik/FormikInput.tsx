@@ -14,6 +14,8 @@ const FormikInput = (props: FormikInputProps) => {
     const { name, placeholder, type = "text", disabled = false, label, subtitle } = props;
     const [field, meta] = useField(name);
 
+    const showError = meta.touched && !!meta.error;
+
     return (
         <VStack align="start" flex={1} width="100%">
             {label && (
@@ -22,11 +24,9 @@ const FormikInput = (props: FormikInputProps) => {
                 </Text>
             )}
             <Input {...field} placeholder={placeholder} type={type} disabled={disabled} />
-            {meta.touched && meta.error && (
-                <Text color="red.500" fontSize="sm">
-                    {meta.error}
-                </Text>
-            )}
+            <Text color="red.500" fontSize="sm" minH="1.25rem">
+                {showError ? meta.error : " "}
+            </Text>
             {subtitle && (
                 <Text fontSize="xs" fontWeight="medium" color="gray.500">
                     {subtitle}
