@@ -1,10 +1,10 @@
-import { Badge, Flex, HStack, Stack, Text, VStack } from "@chakra-ui/react";
+import { Badge, Flex, Stack, Text, VStack } from "@chakra-ui/react";
 import { type FormikValues } from "formik";
 import { useEffect, useState } from "react";
 import { getLoanProducts } from "../api/loanApi";
-import type { LoanProduct as LoanProductType } from "../types/LoanProduct";
-import FormikSelect from "../formik/FormikSelect";
 import Title from "../components/Title";
+import FormikSelect from "../formik/FormikSelect";
+import type { LoanProduct as LoanProductType } from "../types/LoanProduct";
 
 type CardDataProps = {
     title: string;
@@ -29,7 +29,7 @@ const CardData = (props: CardDataProps) => {
 const formatPurposeLabel = (purpose: string) =>
     purpose
         .split("_")
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
         .join(" ");
 
 type LoanProductCardProps = {
@@ -87,7 +87,7 @@ const LoanProductCard = (props: LoanProductCardProps) => {
                 <Text fontSize="xs" color="gray.500">
                     Purposes
                 </Text>
-                <HStack width="100%">
+                <Stack width="100%" direction="row" flexWrap="wrap" gap="0.5rem">
                     {purposes.map((purpose, index) => (
                         <Text
                             key={index}
@@ -101,7 +101,7 @@ const LoanProductCard = (props: LoanProductCardProps) => {
                             {formatPurposeLabel(purpose)}
                         </Text>
                     ))}
-                </HStack>
+                </Stack>
             </VStack>
         </VStack>
     );
@@ -158,19 +158,14 @@ const LoanProduct = ({ formik }: { formik: FormikValues }) => {
     }
 
     if (products.length === 0) {
-        return (
-            <Text color="gray.500">
-                No loan products are available at the moment.
-            </Text>
-        );
+        return <Text color="gray.500">No loan products are available at the moment.</Text>;
     }
 
     const selectedProductId = (formik.values.loanProduct as string) || products[0]?.id;
-    const selectedProduct =
-        products.find((product) => product.id === selectedProductId) ?? products[0];
+    const selectedProduct = products.find(product => product.id === selectedProductId) ?? products[0];
 
     const purposeOptions =
-        selectedProduct?.purposes.map((purpose) => ({
+        selectedProduct?.purposes.map(purpose => ({
             label: formatPurposeLabel(purpose),
             value: purpose,
         })) ?? [];
@@ -178,25 +173,17 @@ const LoanProduct = ({ formik }: { formik: FormikValues }) => {
     const formatAmountRange = (product: LoanProductType) =>
         `R${product.minAmount.toLocaleString()} - R${product.maxAmount.toLocaleString()}`;
 
-    const formatTermRange = (product: LoanProductType) =>
-        `${product.minTerm} - ${product.maxTerm} months`;
+    const formatTermRange = (product: LoanProductType) => `${product.minTerm} - ${product.maxTerm} months`;
 
     const formatInterestRange = (product: LoanProductType) =>
         `${product.interestRateRange.min}% - ${product.interestRateRange.max}%`;
 
     return (
         <>
-            <Text color="gray.500">
-                Select the product and purpose that best matches your need
-            </Text>
+            <Text color="gray.500">Select the product and purpose that best matches your need</Text>
 
-            {/* Stack cards vertically on mobile, side by side on larger screens */}
-            <Stack
-                width="100%"
-                gap="1rem"
-                direction={{ base: "column", md: "row" }}
-            >
-                {products.map((product) => (
+            <Stack width="100%" gap="1rem" direction={{ base: "column", md: "row" }}>
+                {products.map(product => (
                     <LoanProductCard
                         key={product.id}
                         title={product.name}
