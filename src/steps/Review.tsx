@@ -220,24 +220,7 @@ const Review = () => {
             : toTitleCase(loanType);
 
     return (
-        <VStack
-            border="1px solid"
-            borderColor="gray.200"
-            borderRadius="md"
-            boxShadow="sm"
-            padding="1rem"
-            width="100%"
-            height="100%"
-            alignItems="flex-start"
-            gap="0.5rem"
-            marginTop="2rem"
-            marginBottom="2rem"
-        >
-            <Text fontSize="sm" color="gray.500">
-                STEP 4 OF 4
-            </Text>
-
-            <Title title="Review Your Results" />
+        <>
             <Text color="gray.500">
                 Review your personal and financial details, loan request, and a mocked eligibility and rate outcome
                 based entirely on the demo API specification.
@@ -398,10 +381,6 @@ const Review = () => {
 
                 {rateResult && (
                     <>
-                        <Text fontSize="sm" color="gray.800" marginTop="0.5rem">
-                            Based on your income, expenses and requested amount, this loan looks affordable.
-                        </Text>
-
                         <Box
                             width="100%"
                             padding="1rem"
@@ -459,7 +438,7 @@ const Review = () => {
                     </>
                 )}
             </VStack>
-        </VStack>
+        </>
     );
 };
 
