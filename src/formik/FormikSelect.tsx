@@ -54,13 +54,15 @@ const FormikSelect = (props: FormikSelectProps) => {
                 <Select.Trigger>
                     <Select.ValueText placeholder={placeholder} />
                 </Select.Trigger>
-                <Select.Content>
-                    {items.map((item) => (
-                        <Select.Item key={item.value} item={item}>
-                            {item.label}
-                        </Select.Item>
-                    ))}
-                </Select.Content>
+                <Select.Positioner>
+                    <Select.Content>
+                        {items.map((item) => (
+                            <Select.Item key={item.value} item={item}>
+                                {item.label}
+                            </Select.Item>
+                        ))}
+                    </Select.Content>
+                </Select.Positioner>
             </Select.Root>
 
             {meta.touched && meta.error && (
