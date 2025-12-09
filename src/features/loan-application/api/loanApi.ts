@@ -1,7 +1,7 @@
-import type { LoanProductsResponse } from "../types/LoanProduct";
-import type { LoanEligibilityResponse } from "../types/LoanEligibility";
-import type { InterestRateCalculatorResponse } from "../types/InterestRateCalculator";
-import type { ValidationRulesResponse } from "../types/ValidationRules";
+import type { InterestRateCalculatorResponse } from "../../types/InterestRateCalculator";
+import type { LoanEligibilityResponse } from "../../types/LoanEligibility";
+import type { LoanProductsResponse } from "../../types/LoanProduct";
+import type { ValidationRulesResponse } from "../../types/ValidationRules";
 
 /**
  * Request payload for the mocked loan eligibility endpoint.
