@@ -1,4 +1,17 @@
-import { Button, Flex, VStack, Text } from "@chakra-ui/react";
+import {
+    Button,
+    Flex,
+    VStack,
+    Text,
+    DialogRoot,
+    DialogContent,
+    DialogHeader,
+    DialogBody,
+    DialogFooter,
+    DialogCloseTrigger,
+    DialogBackdrop,
+    DialogPositioner,
+} from "@chakra-ui/react";
 import { Form, Formik, type FormikValues } from "formik";
 import { useState } from "react";
 import type { AnySchema } from "yup";
@@ -15,12 +28,13 @@ type WizardStep = {
 type WizardProps = {
     steps: WizardStep[];
     initialValues: FormikValues;
-    onSubmit: (values: FormikValues) => void;
+    onSubmit: (values: FormikValues) => void | Promise<void>;
 };
 
 const FormWizard = (props: WizardProps) => {
     const { steps, initialValues, onSubmit } = props;
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     const isLastStep = currentStepIndex === steps.length - 1;
     const currentStep = steps[currentStepIndex];
@@ -41,7 +55,8 @@ const FormWizard = (props: WizardProps) => {
                 validationSchema={currentStep.validationSchema}
                 onSubmit={async values => {
                     if (isLastStep) {
-                        onSubmit(values);
+                        await onSubmit(values);
+                        setIsSubmitted(true);
                     } else {
                         setCurrentStepIndex(i => i + 1);
                     }
@@ -98,6 +113,40 @@ const FormWizard = (props: WizardProps) => {
                     </Form>
                 )}
             </Formik>
+
+            <DialogRoot
+                open={isSubmitted}
+                placement="center"
+                motionPreset="scale"
+                onOpenChange={(details: { open: boolean }) => {
+                    if (!details.open) {
+                        setIsSubmitted(false);
+                    }
+                }}
+            >
+                <DialogBackdrop />
+                <DialogPositioner>
+                    <DialogContent>
+                        <DialogHeader>Application Submitted</DialogHeader>
+                        <DialogBody>
+                            <Text>
+                                Thank you for your submission. Our team will review your application and contact you
+                                shortly.
+                            </Text>
+                        </DialogBody>
+                        <DialogFooter>
+                            <Button
+                                color="white"
+                                bgColor="orange.500"
+                                onClick={() => setIsSubmitted(false)}
+                            >
+                                Close
+                            </Button>
+                        </DialogFooter>
+                        <DialogCloseTrigger />
+                    </DialogContent>
+                </DialogPositioner>
+            </DialogRoot>
         </VStack>
     );
 };
