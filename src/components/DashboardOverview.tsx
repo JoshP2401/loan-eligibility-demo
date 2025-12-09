@@ -81,7 +81,7 @@ const DashboardOverview = () => {
             title: "Loan Details",
         },
         {
-            component: () => <Review />,
+            component: (formik: FormikValues) => <Review formik={formik} />,
             validationSchema: "",
             title: "Review",
         },
