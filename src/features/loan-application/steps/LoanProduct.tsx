@@ -1,10 +1,10 @@
 import { Badge, Flex, Stack, Text, VStack } from "@chakra-ui/react";
 import { type FormikValues } from "formik";
 import { useEffect, useState } from "react";
-import { getLoanProducts } from "../api/loanApi";
 import Title from "../components/Title";
-import FormikSelect from "../formik/FormikSelect";
-import type { LoanProduct as LoanProductType } from "../types/LoanProduct";
+import FormikSelect from "../../../shared/form/formik/FormikSelect";
+import type { LoanProduct as LoanProductType } from "../../types/LoanProduct";
+import { getLoanProducts } from "../api/loanApi";
 
 type CardDataProps = {
     title: string;

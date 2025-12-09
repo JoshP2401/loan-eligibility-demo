@@ -1,14 +1,14 @@
 import { Badge, Box, HStack, Progress, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import Title from "../components/Title";
+import type { InterestRateCalculatorResponse } from "../../types/InterestRateCalculator";
+import type { LoanEligibilityResponse } from "../../types/LoanEligibility";
 import {
-    checkLoanEligibility,
-    calculateInterestRate,
-    type LoanEligibilityRequest,
     type InterestRateCalculatorRequest,
+    type LoanEligibilityRequest,
+    calculateInterestRate,
+    checkLoanEligibility,
 } from "../api/loanApi";
-import type { LoanEligibilityResponse } from "../types/LoanEligibility";
-import type { InterestRateCalculatorResponse } from "../types/InterestRateCalculator";
+import Title from "../components/Title";
 
 type EntryPairingProps = {
     title: string;
@@ -19,18 +19,11 @@ const toTitleCase = (value: string): string =>
     value
         .split(/[_\s]+/)
         .filter(Boolean)
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
         .join(" ");
 
 const EntryPairing = ({ title, value }: EntryPairingProps) => (
-    <Box
-        width="100%"
-        borderRadius="md"
-        border="1px solid"
-        borderColor="gray.200"
-        padding="0.75rem"
-        bg="white"
-    >
+    <Box width="100%" borderRadius="md" border="1px solid" borderColor="gray.200" padding="0.75rem" bg="white">
         <Text fontSize="xs" color="gray.500" textTransform="uppercase" letterSpacing="0.03em">
             {title}
         </Text>
@@ -117,8 +110,7 @@ const EligibilityWidget = (props: EligibilityWidgetProps) => {
 const formatCurrency = (amount: number) =>
     `R${amount.toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-const safeCurrency = (amount: number | null | undefined) =>
-    amount != null ? formatCurrency(amount) : "-";
+const safeCurrency = (amount: number | null | undefined) => (amount != null ? formatCurrency(amount) : "-");
 
 // Static request bodies that match LoanEligibilitySimulatorEndpoints.md
 const STATIC_ELIGIBILITY_REQUEST: LoanEligibilityRequest = {
@@ -239,24 +231,12 @@ const Review = () => {
                 <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="1rem" marginTop="0.75rem">
                     <EntryPairing title="Age" value={String(personalInfo.age)} />
                     <EntryPairing title="Employment Status" value={employmentStatusLabel} />
-                    <EntryPairing
-                        title="Monthly Income"
-                        value={safeCurrency(financialInfo.monthlyIncome)}
-                    />
-                    <EntryPairing
-                        title="Monthly Expenses"
-                        value={safeCurrency(financialInfo.monthlyExpenses)}
-                    />
+                    <EntryPairing title="Monthly Income" value={safeCurrency(financialInfo.monthlyIncome)} />
+                    <EntryPairing title="Monthly Expenses" value={safeCurrency(financialInfo.monthlyExpenses)} />
                 </SimpleGrid>
                 <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="1rem" marginTop="0.75rem">
-                    <EntryPairing
-                        title="Existing Debt"
-                        value={safeCurrency(financialInfo.existingDebt)}
-                    />
-                    <EntryPairing
-                        title="Credit Score"
-                        value={String(financialInfo.creditScore)}
-                    />
+                    <EntryPairing title="Existing Debt" value={safeCurrency(financialInfo.existingDebt)} />
+                    <EntryPairing title="Credit Score" value={String(financialInfo.creditScore)} />
                 </SimpleGrid>
             </Box>
 
@@ -272,18 +252,9 @@ const Review = () => {
                 <Title size="xl" title="Loan Details" />
                 <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="1rem" marginTop="0.75rem">
                     <EntryPairing title="Product" value={productLabel} />
-                    <EntryPairing
-                        title="Purpose"
-                        value={toTitleCase(loanDetails.loanPurpose)}
-                    />
-                    <EntryPairing
-                        title="Requested Amount"
-                        value={safeCurrency(loanDetails.requestedAmount)}
-                    />
-                    <EntryPairing
-                        title="Loan Term (months)"
-                        value={String(loanDetails.loanTerm)}
-                    />
+                    <EntryPairing title="Purpose" value={toTitleCase(loanDetails.loanPurpose)} />
+                    <EntryPairing title="Requested Amount" value={safeCurrency(loanDetails.requestedAmount)} />
+                    <EntryPairing title="Loan Term (months)" value={String(loanDetails.loanTerm)} />
                 </SimpleGrid>
             </Box>
 
@@ -293,9 +264,7 @@ const Review = () => {
                     {eligibilityResult?.eligibilityResult.isEligible ? "Eligible" : "Not Eligible"}
                 </Badge>
             </HStack>
-            <Text color="gray.500">
-                A mocked interpretation of your inputs, not a real credit decision.
-            </Text>
+            <Text color="gray.500">A mocked interpretation of your inputs, not a real credit decision.</Text>
 
             {eligibilityLoading && (
                 <Text color="gray.500" fontSize="sm">
@@ -325,30 +294,22 @@ const Review = () => {
                             <EligibilityWidget
                                 title="Approval Likelihood"
                                 data={`${eligibilityResult.eligibilityResult.approvalLikelihood}%`}
-                                subtitle={`Risk: ${toTitleCase(
-                                    eligibilityResult.eligibilityResult.riskCategory,
-                                )}`}
+                                subtitle={`Risk: ${toTitleCase(eligibilityResult.eligibilityResult.riskCategory)}`}
                             />
                             <EligibilityWidget
                                 title="Recommended Amount"
                                 data={safeCurrency(eligibilityResult.recommendedLoan.recommendedAmount)}
-                                subtitle={`Max Amount: ${safeCurrency(
-                                    eligibilityResult.recommendedLoan.maxAmount,
-                                )}`}
+                                subtitle={`Max Amount: ${safeCurrency(eligibilityResult.recommendedLoan.maxAmount)}`}
                             />
                             <EligibilityWidget
                                 title="Debt-to-Income Ratio"
-                                data={`${eligibilityResult.affordabilityAnalysis.debtToIncomeRatio.toFixed(
-                                    1,
-                                )}%`}
+                                data={`${eligibilityResult.affordabilityAnalysis.debtToIncomeRatio.toFixed(1)}%`}
                                 subtitle="Total debt as a share of your income"
                             />
                         </SimpleGrid>
                     </Box>
 
-                    <BudgetStretchBar
-                        debtToIncomeRatio={eligibilityResult.affordabilityAnalysis.debtToIncomeRatio}
-                    />
+                    <BudgetStretchBar debtToIncomeRatio={eligibilityResult.affordabilityAnalysis.debtToIncomeRatio} />
                 </>
             )}
 
@@ -363,8 +324,8 @@ const Review = () => {
             >
                 <Title size="xl" title="Selected Product & Rate Preview" />
                 <Text color="gray.500">
-                    Based on the loan product you chose and the information entered above, this
-                    calculates a mocked rate and early repayment view.
+                    Based on the loan product you chose and the information entered above, this calculates a mocked rate
+                    and early repayment view.
                 </Text>
 
                 {rateLoading && (
@@ -403,9 +364,7 @@ const Review = () => {
                                 <EligibilityWidget
                                     title="Total Repayment"
                                     data={safeCurrency(rateResult.totalRepayment)}
-                                    subtitle={`Total Interest: ${safeCurrency(
-                                        rateResult.totalInterest,
-                                    )}`}
+                                    subtitle={`Total Interest: ${safeCurrency(rateResult.totalInterest)}`}
                                 />
                             </SimpleGrid>
                         </Box>
@@ -424,7 +383,7 @@ const Review = () => {
                                 This is an example of how your monthly payments will be structured.
                             </Text>
 
-                            {rateResult.paymentSchedule.map((entry) => (
+                            {rateResult.paymentSchedule.map(entry => (
                                 <PaymentScheduleEntry
                                     key={entry.month}
                                     month={entry.month}

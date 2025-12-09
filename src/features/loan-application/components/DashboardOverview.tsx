@@ -6,13 +6,13 @@ import LoanTerm from "../steps/LoanTerm";
 import Review from "../steps/Review";
 import DashboardHeader from "./DashboardHeader";
 import FormWizard from "./LoanWizard";
-import { checkLoanEligibility, type LoanEligibilityRequest } from "../api/loanApi";
 import {
     loanProductStepSchema,
     incomeExpensesStepSchema,
     loanDetailsStepSchema,
     fullLoanApplicationSchema,
 } from "../validation/loanValidation";
+import { checkLoanEligibility, type LoanEligibilityRequest } from "../api/loanApi";
 
 const DashboardOverview = () => {
     const initialValues = {
@@ -87,14 +87,24 @@ const DashboardOverview = () => {
             title: "Loan Details",
         },
         {
-            component: (formik: FormikValues) => <Review formik={formik} />,
+            component: () => <Review />,
             validationSchema: fullLoanApplicationSchema,
             title: "Review",
         },
     ];
 
     return (
-        <VStack width="100%" height="100%" pt="2rem" paddingInline="2rem">
+        <VStack
+            margin="1rem"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            borderRadius="8px"
+            boxShadow="sm"
+            height="100%"
+            paddingInline="2rem"
+            pt="2rem"
+        >
             <DashboardHeader />
             <FormWizard steps={steps} initialValues={initialValues} onSubmit={handleSubmit} />
         </VStack>

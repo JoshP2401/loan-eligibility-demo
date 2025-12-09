@@ -1,5 +1,5 @@
 import { HStack, Text } from "@chakra-ui/react";
-import FormikInput from "../formik/FormikInput";
+import FormikInput from "../../../shared/form/formik/FormikInput";
 
 const IncomeExpenses = () => {
     return (

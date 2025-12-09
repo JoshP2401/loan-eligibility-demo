@@ -1,6 +1,6 @@
 import { HStack, Text } from "@chakra-ui/react";
-import FormikInput from "../formik/FormikInput";
-import FormikSelect from "../formik/FormikSelect";
+import FormikInput from "../../../shared/form/formik/FormikInput";
+import FormikSelect from "../../../shared/form/formik/FormikSelect";
 
 const employmentStatusOptions = [
     { label: "Employed", value: "employed" },
