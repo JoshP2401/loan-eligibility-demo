@@ -1,11 +1,14 @@
 import { Route, Routes } from "react-router-dom";
-import Dashboard from "./screens/Dashboard";
+import DashboardOverview from "./components/DashboardOverview";
+import DashboardContainer from "./screens/DashboardContainer";
 
 const Router = () => {
     return (
-        <Routes>
-            <Route path="/" element={<Dashboard />} />
-        </Routes>
+        <DashboardContainer>
+            <Routes>
+                <Route path="/" element={<DashboardOverview />} />
+            </Routes>
+        </DashboardContainer>
     );
 };
 
