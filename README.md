@@ -16,6 +16,19 @@ On the final **Review** step the app calls a local mock API and renders:
 
 These values are **mocked**: the frontend always uses fixed example responses defined in the mock API module, aligned with the sample payloads in `LoanEligibilitySimulatorEndpoints.md`. They are for demo only, not real credit decisions.
 
+## Project
+
+### Task Tracking
+Task tracking was done with Asana:
+
+<img width="1330" height="752" alt="Screenshot 2025-12-10 at 09 01 01" src="https://github.com/user-attachments/assets/2151890b-1a29-4ae1-948f-fa61d361922b" />
+
+### Time Tracking
+Time tracking was done with Clockify:
+
+<img width="1358" height="350" alt="Screenshot 2025-12-10 at 09 00 22" src="https://github.com/user-attachments/assets/3a723b7b-f84d-434e-9bfe-5d16b6927f35" />
+
+
 ## Prerequisites & Setup
 
 - Node.js 20.x LTS (or later)
