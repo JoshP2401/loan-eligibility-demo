@@ -234,9 +234,10 @@ const Review = () => {
                     <EntryPairing title="Monthly Income" value={safeCurrency(financialInfo.monthlyIncome)} />
                     <EntryPairing title="Monthly Expenses" value={safeCurrency(financialInfo.monthlyExpenses)} />
                 </SimpleGrid>
-                <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="1rem" marginTop="0.75rem">
+                <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} gap="1rem" marginTop="0.75rem">
                     <EntryPairing title="Existing Debt" value={safeCurrency(financialInfo.existingDebt)} />
                     <EntryPairing title="Credit Score" value={String(financialInfo.creditScore)} />
+                    <EntryPairing title="Employment Duration" value={`${personalInfo.employmentDuration} months`} />
                 </SimpleGrid>
             </Box>
 
@@ -309,6 +310,35 @@ const Review = () => {
                         </SimpleGrid>
                     </Box>
 
+                    <Box
+                        width="100%"
+                        marginTop="0.5rem"
+                        marginBottom="1rem"
+                        padding="1rem"
+                        borderRadius="md"
+                        border="1px solid"
+                        borderColor="gray.200"
+                        bg="white"
+                    >
+                        <SimpleGrid columns={{ base: 1, md: 3 }} gap="1rem">
+                            <EligibilityWidget
+                                title="Loan-to-Income Ratio"
+                                data={`${eligibilityResult.affordabilityAnalysis.loanToIncomeRatio.toFixed(1)}%`}
+                                subtitle="Loan size as a share of your income"
+                            />
+                            <EligibilityWidget
+                                title="Affordability Score"
+                                data={toTitleCase(eligibilityResult.affordabilityAnalysis.affordabilityScore)}
+                                subtitle="Overall affordability assessment"
+                            />
+                            <EligibilityWidget
+                                title="Decision Reason"
+                                data={eligibilityResult.eligibilityResult.decisionReason}
+                                subtitle="Key factors behind this mocked decision"
+                            />
+                        </SimpleGrid>
+                    </Box>
+ 
                     <BudgetStretchBar debtToIncomeRatio={eligibilityResult.affordabilityAnalysis.debtToIncomeRatio} />
                 </>
             )}

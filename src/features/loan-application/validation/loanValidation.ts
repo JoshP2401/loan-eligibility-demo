@@ -25,6 +25,7 @@ export type LoanApplicationValues = {
     loanPurpose: string;
     age: string | number;
     employmentStatus: string;
+    employmentDuration: string | number;
     monthlyIncome: string | number;
     monthlyExpenses: string | number;
     loanAmount: string | number;
@@ -45,6 +46,12 @@ const ageSchema = Yup.number()
 const employmentStatusSchema = Yup.string()
     .required("Employment status is required")
     .oneOf(["employed", "self_employed", "unemployed", "retired"], "Please select a valid employment status");
+
+const employmentDurationSchema = Yup.number()
+    .typeError("Employment duration must be a number of months")
+    .required("Employment duration is required")
+    .integer("Employment duration must be a whole number of months")
+    .min(LOAN_LIMITS.employmentDuration.min, "Minimum 3 months employment required");
 
 const monthlyIncomeSchema = Yup.number()
     .typeError("Monthly income must be a number")
@@ -111,6 +118,7 @@ export const loanProductStepSchema = Yup.object({
 export const incomeExpensesStepSchema = Yup.object({
     age: ageSchema,
     employmentStatus: employmentStatusSchema,
+    employmentDuration: employmentDurationSchema,
     ...incomeExpensesShape,
     existingDebt: existingDebtSchema,
 }) as Yup.ObjectSchema<Partial<LoanApplicationValues>>;
@@ -130,6 +138,7 @@ export const fullLoanApplicationSchema = Yup.object({
     loanPurpose: loanPurposeSchemaBase,
     age: ageSchema,
     employmentStatus: employmentStatusSchema,
+    employmentDuration: employmentDurationSchema,
     ...incomeExpensesShape,
     existingDebt: existingDebtSchema,
     loanAmount: loanAmountSchema,

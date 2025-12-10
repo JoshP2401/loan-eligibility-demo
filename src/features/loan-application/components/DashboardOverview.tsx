@@ -20,6 +20,7 @@ const DashboardOverview = () => {
         loanPurpose: "",
         age: "",
         employmentStatus: "",
+        employmentDuration: "",
         monthlyIncome: "",
         monthlyExpenses: "",
         loanAmount: "",
@@ -31,21 +32,22 @@ const DashboardOverview = () => {
     const handleSubmit = async (values: FormikValues) => {
         const age = values.age ? Number(values.age) : 35;
         const employmentStatus = (values.employmentStatus as string) || "employed";
-
+        const employmentDuration = values.employmentDuration ? Number(values.employmentDuration) : 24;
+ 
         const monthlyIncome = Number(values.monthlyIncome ?? 0);
         const monthlyExpenses = Number(values.monthlyExpenses ?? 0);
         const existingDebt = Number(values.existingDebt ?? 0);
         const creditScore = values.creditScore ? Number(values.creditScore) : 650;
-
+ 
         const requestedAmount = Number(values.loanAmount ?? 0);
         const loanTerm = Number(values.loanTerm ?? 0);
         const loanPurpose = (values.loanPurpose as string) || "home_improvement";
-
+ 
         const payload: LoanEligibilityRequest = {
             personalInfo: {
                 age,
                 employmentStatus,
-                employmentDuration: 24,
+                employmentDuration,
             },
             financialInfo: {
                 monthlyIncome,

@@ -33,6 +33,16 @@ const IncomeExpenses = () => {
 
             <HStack width="100%" gap="1rem" marginTop="1rem">
                 <FormikInput
+                    name="employmentDuration"
+                    placeholder="24"
+                    label="Employment Duration (months)"
+                    subtitle="Time with your current employer in months (minimum 3)."
+                    type="number"
+                />
+            </HStack>
+
+            <HStack width="100%" gap="1rem" marginTop="1rem">
+                <FormikInput
                     name="monthlyIncome"
                     placeholder="0.00"
                     label="Monthly Income (After Tax)"
