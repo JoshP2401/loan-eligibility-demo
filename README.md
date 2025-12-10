@@ -89,7 +89,8 @@ There is no automated test runner yet. To test the flow and the error messages:
    - Correct them with valid values so you can proceed to Review.
 
 5. Step 4 – Review
-   - Confirm the summary matches the mocked response data provided
+   - Confirm the summary matches the mocked response data provided.
+   - Confirm once Submit is clicked that the entered form values are logged.
    - Refresh the page and confirm the mocked offer stays the same (responses are fixed demo data from the mock API).
 
 ## Mock Data & Where To Change It
