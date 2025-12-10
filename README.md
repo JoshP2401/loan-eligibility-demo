@@ -2,6 +2,16 @@
 
 A small React + TypeScript single-page app that walks a user through a multi-step loan application and shows a mocked eligibility and rate outcome. Built with Vite and Chakra UI; all data is simulated in the browser, no backend required.
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Prerequisites & Setup](#prerequisites--setup)
+- [Running & Building](#running--building)
+- [Testing (Happy Path with Validation)](#testing-happy-path-with-validation)
+- [Mock Data & Where To Change It](#mock-data--where-to-change-it)
+- [Limitations](#limitations)
+- [Future Improvements](#future-improvements)
+
 ## Overview
 
 The wizard collects:
