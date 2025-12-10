@@ -51,7 +51,7 @@ The page can be viewed via GitHub pages [here.](https://joshp2401.github.io/loan
 Clone and install:
 
 ```bash
-git clone <REPO_URL> loan-eligibility-demo
+git clone https://github.com/JoshP2401/loan-eligibility-demo.git
 cd loan-eligibility-demo
 npm install
 ```
