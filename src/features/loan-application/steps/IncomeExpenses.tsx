@@ -34,17 +34,19 @@ const IncomeExpenses = () => {
             <HStack width="100%" gap="1rem" marginTop="1rem">
                 <FormikInput
                     name="monthlyIncome"
-                    placeholder="Monthly Income"
+                    placeholder="0.00"
                     label="Monthly Income (After Tax)"
                     subtitle="Your regular take-home pay per month (minimum R5,000)."
                     type="number"
+                    prefix="R"
                 />
                 <FormikInput
                     name="monthlyExpenses"
-                    placeholder="Monthly Expenses"
+                    placeholder="0.00"
                     label="Monthly Expenses"
                     subtitle="Include rent, transport, food and other fixed commitments."
                     type="number"
+                    prefix="R"
                 />
             </HStack>
         </>

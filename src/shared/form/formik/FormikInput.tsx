@@ -1,4 +1,4 @@
-import { Input, Text, VStack } from "@chakra-ui/react";
+import { Box, Input, Text, VStack } from "@chakra-ui/react";
 import { useField } from "formik";
 
 type FormikInputProps = {
@@ -8,10 +8,11 @@ type FormikInputProps = {
     disabled?: boolean;
     label?: string;
     subtitle?: string;
+    prefix?: string;
 };
 
 const FormikInput = (props: FormikInputProps) => {
-    const { name, placeholder, type = "text", disabled = false, label, subtitle } = props;
+    const { name, placeholder, type = "text", disabled = false, label, subtitle, prefix } = props;
     const [field, meta] = useField(name);
 
     const showError = meta.touched && !!meta.error;
@@ -23,7 +24,30 @@ const FormikInput = (props: FormikInputProps) => {
                     {label}
                 </Text>
             )}
-            <Input {...field} placeholder={placeholder} type={type} disabled={disabled} />
+
+            <Box position="relative" width="100%">
+                {prefix && (
+                    <Text
+                        position="absolute"
+                        left="0.75rem"
+                        top="50%"
+                        transform="translateY(-50%)"
+                        color="gray.600"
+                        fontSize="sm"
+                        pointerEvents="none"
+                    >
+                        {prefix}
+                    </Text>
+                )}
+                <Input
+                    {...field}
+                    placeholder={placeholder}
+                    type={type}
+                    disabled={disabled}
+                    paddingLeft={prefix ? "2.25rem" : undefined}
+                />
+            </Box>
+
             <Text color="red.500" fontSize="sm" minH="1.25rem">
                 {showError ? meta.error : " "}
             </Text>

@@ -14,8 +14,9 @@ const IncomeExpenses = () => {
                     name="loanAmount"
                     label="Desired Loan Amount"
                     subtitle="The amount you'd like to borrow (R5,00 - R300,000"
-                    placeholder="Enter amount"
+                    placeholder="0.00"
                     type="number"
+                    prefix="R"
                 />
                 <FormikInput
                     name="loanTerm"
@@ -31,8 +32,9 @@ const IncomeExpenses = () => {
                     name="existingDebt"
                     label="Existing Debt (Optional)"
                     subtitle="Helps estimate how your current credit affects affordability."
-                    placeholder="Enter debt"
+                    placeholder="0.00"
                     type="number"
+                    prefix="R"
                 />
 
                 <FormikInput
