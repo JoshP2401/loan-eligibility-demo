@@ -39,6 +39,9 @@ Time tracking was done with Clockify:
 
 <img width="1358" height="350" alt="Clockify (Time)" src="https://github.com/user-attachments/assets/b973cf8f-0677-468e-8d25-b6a797d7f57e" />
 
+### GitHub Pages
+The page can be viewed via GitHub pages [here.](https://joshp2401.github.io/loan-eligibility-demo/)
+
 
 ## Prerequisites & Setup
 
