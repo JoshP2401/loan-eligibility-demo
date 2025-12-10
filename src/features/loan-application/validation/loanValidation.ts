@@ -53,7 +53,7 @@ const monthlyIncomeSchema = Yup.number()
 
 const monthlyExpensesSchema = Yup.number()
     .typeError("Monthly expenses must be a number")
-    .required("Monthly expenses are required")
+    .required("Please add your expenses before continuing")
     .min(LOAN_LIMITS.expenses.min, "Monthly expenses cannot be negative");
 
 const existingDebtSchema = Yup.number()
@@ -96,17 +96,7 @@ const loanPurposeSchemaBase = Yup.string().required("Please select a loan purpos
  */
 const incomeExpensesShape = {
     monthlyIncome: monthlyIncomeSchema,
-    monthlyExpenses: monthlyExpensesSchema.test(
-        "expenses-less-than-income",
-        "Monthly expenses should not exceed monthly income",
-        function (value) {
-            const { monthlyIncome } = this.parent;
-            if (monthlyIncome === undefined || monthlyIncome === null || value === undefined || value === null) {
-                return true;
-            }
-            return Number(value) <= Number(monthlyIncome);
-        }
-    ),
+    monthlyExpenses: monthlyExpensesSchema,
 };
 
 /*
