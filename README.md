@@ -48,8 +48,8 @@ Time tracking was done with Clockify:
 Clone and install:
 
 ```bash
-git clone <REPO_URL> capitec-demo
-cd capitec-demo
+git clone <REPO_URL> loan-eligibility-demo
+cd loan-eligibility-demo
 npm install
 ```
 
